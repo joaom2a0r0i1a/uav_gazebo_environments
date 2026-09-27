@@ -12,7 +12,7 @@ PLY=os.environ.get('GT_OUT', os.path.join(ROOT,'..','UAV_3D_reconstruction','sin
 X0,X1,Y0,Y1=-10.0,10.0,-8.0,8.0
 FH=3.3; SLAB=0.3; WT=0.15; ROOFZ=3*FH; FLOORZ=[0.0,FH,2*FH]
 ATR=(-2.5,2.5,-2.5,2.5); STR=(4.0,10.0,-8.0,-2.0); D=0.06; WBOT,WTOP=1.1,2.3
-SHOLE=(5.2,9.6,-5.4,-3.6)            # stair-well opening in the L2/L3 floor slabs (rest of the shaft IS floored)
+SHOLE=(5.2,9.6,-5.4,-3.6)            # stairwell opening in the L2/L3 floor slabs (rest of the shaft IS floored)
 HX0,HX1,HY0,HY1=-4.0,4.0,-4.0,4.0   # corridor ring outer boundary (THIN 1.5 m ring around the atrium)
 DW=1.1                               # UNIFORM interior door width
 GREY=(205,205,205);DGREY=(95,95,95);WHITE=(240,240,240);WOOD=(150,100,55);GLASS=(95,190,180)
@@ -37,7 +37,7 @@ def wall_run(tag,x0,y0,x1,y1,zb,h,t=WT,gtf=None,mat='Gazebo/White',rgb=WHITE,doo
         if horiz: add(f'{tag}_L{j}',p,y0,zb+2.2+(h-2.2)/2,w,t,h-2.2,sf,mat,rgb)
         else:     add(f'{tag}_L{j}',x0,p,zb+2.2+(h-2.2)/2,t,w,h-2.2,sf,mat,rgb)
 
-# ---------- shell with real window openings (teal glass) ----------
+# shell with real window openings (teal glass)
 def shell_wall(tag,const,axis,edge,fin,gdoors=()):
     L0,L1=(X0,X1) if axis=='x' else (Y0,Y1)
     pil=[-10,-5,0,5,10] if axis=='x' else [-8,-4,0,4,8]
@@ -48,7 +48,7 @@ def shell_wall(tag,const,axis,edge,fin,gdoors=()):
         if wlo>zb+0.01: solid.append((zb,wlo))
         zb=whi
     if zb<ROOFZ-0.01: solid.append((zb,ROOFZ))
-    dcuts=sorted((p-w/2,p+w/2) for p,w in gdoors)      # exterior ground-floor entrance openings (z<2.2)
+    dcuts=sorted((p-w/2,p+w/2) for p,w in gdoors)      # exterior ground floor entrance openings (z<2.2)
     def in_door(pos,half): return any(c0<pos+half and pos-half<c1 for c0,c1 in dcuts)
     def band_segs(lo,hi):                              # split [lo,hi] removing door cuts
         segs=[]; cur=lo
@@ -57,8 +57,8 @@ def shell_wall(tag,const,axis,edge,fin,gdoors=()):
             cur=max(cur,c1)
         if cur<hi: segs.append((cur,hi));
         return segs
-    for i,(z0,z1) in enumerate(solid):                 # solid full-length bands between windows
-        if z0<2.2-1e-6 and dcuts:                       # ground band: carve door gap (no lintel here; z2.2+ band is the lintel)
+    for i,(z0,z1) in enumerate(solid):                 # solid full length bands between windows
+        if z0<2.2-1e-6 and dcuts:                       # ground band. carve door gap (no lintel here; z2.2+ band is the lintel)
             for si,(s0,s1) in enumerate(band_segs(L0,L1)):
                 if axis=='x': add(f'{tag}sb{i}_{si}',(s0+s1)/2,const,(z0+z1)/2,s1-s0,WT,z1-z0,[fin],'Gazebo/White',WHITE)
                 else:         add(f'{tag}sb{i}_{si}',const,(s0+s1)/2,(z0+z1)/2,WT,s1-s0,z1-z0,[fin],'Gazebo/White',WHITE)
@@ -90,7 +90,7 @@ add('canopy',ENTRY,Y0-0.9,2.6,3.0,1.8,0.15,[],'Gazebo/DarkGrey',DGREY)
 add('canopyL',ENTRY-1.4,Y0-1.7,1.3,0.15,0.15,2.6,ALL,'Gazebo/DarkGrey',DGREY)
 add('canopyR',ENTRY+1.4,Y0-1.7,1.3,0.15,0.15,2.6,ALL,'Gazebo/DarkGrey',DGREY)
 
-# ---------- slabs / roof / skylight / core ----------
+# slabs / roof / skylight / core
 def slab(tag,z,t,holes,col,zf=('+z','-z'),finish=True):
     xs=sorted({X0,X1}|{h[0] for h in holes}|{h[1] for h in holes}); ys=sorted({Y0,Y1}|{h[2] for h in holes}|{h[3] for h in holes}); k=0
     for i in range(len(xs)-1):
@@ -117,18 +117,17 @@ def parapet(tag,z,hp=1.0,t=0.15):   # SOLID low wall around the atrium (no holes
     add(f'{tag}E', o,0,z+hp/2,t,2*L,hp,['+x','-x','+z'],'Gazebo/White',WHITE)
     add(f'{tag}W',-o,0,z+hp/2,t,2*L,hp,['+x','-x','+z'],'Gazebo/White',WHITE)
 parapet('pL2',FLOORZ[1]); parapet('pL3',FLOORZ[2])
-# Switchback in shaft x[4,10] y[-8,-2]; THIN open treads (0.1 m). Lower flight climbs EAST, upper flight climbs
-# WEST so you ARRIVE facing the corridor/centre (toward the door at x=4). Treads pass up through the SHOLE well.
+# Switchback stair in the shaft with thin open treads, arriving facing the corridor.
 TF=['+x','-x','+y','-y','+z']
 for fl in range(2):
     zb=FLOORZ[fl]
-    for k in range(11):                                     # flight A: +x (east) along south lane, 0 -> 1.65 m
+    for k in range(11):                                     # flight A. +x (east) along south lane, 0 -> 1.65 m
         add(f'st{fl}a{k}',5.5+k*0.38,-6.8,zb+0.15*(k+1),0.40,1.6,0.10,TF,'Gazebo/DarkGrey',DGREY)
-    add(f'st{fl}land',9.2,-5.5,zb+1.65,1.4,2.6,0.12,['+z','+x','+y','-y'],'Gazebo/DarkGrey',DGREY)  # half-landing (east)
-    for k in range(11):                                     # flight B: -x (west) along north lane, 1.65 -> 3.3 m; arrive facing WEST
+    add(f'st{fl}land',9.2,-5.5,zb+1.65,1.4,2.6,0.12,['+z','+x','+y','-y'],'Gazebo/DarkGrey',DGREY)  # half landing (east)
+    for k in range(11):                                     # flight B. -x (west) along north lane, 1.65 -> 3.3 m; arrive facing WEST
         add(f'st{fl}b{k}',9.3-k*0.38,-4.5,zb+1.65+0.15*(k+1),0.40,1.6,0.10,TF,'Gazebo/DarkGrey',DGREY)
 
-# ---------- PRIMITIVE furniture + clutter ----------
+# PRIMITIVE furniture + clutter
 def chair(t,cx,cy,z,fy=1):
     add(f'{t}s',cx,cy,z+0.24,0.46,0.46,0.48,ALL,'Gazebo/DarkGrey',DGREY); add(f'{t}b',cx,cy+0.2*fy,z+0.6,0.46,0.06,0.55,ALL,'Gazebo/DarkGrey',DGREY)
 def desk(t,cx,cy,z):
@@ -155,9 +154,9 @@ def furnish(a,b,c,dd,fl,rng,tag,dwall,dpos,extra_clear=()):
     placed=[]; dcx,dcy={'N':(dpos,dd),'S':(dpos,b),'E':(c,dpos),'W':(a,dpos)}[dwall]
     doors_xy=[(dcx,dcy)]+list(extra_clear)                                                         # corridor door + any connecting doors
     def free(x,y,fx,fy):
-        if not (ax+fx/2-1e-6<=x<=cx_-fx/2+1e-6 and ay+fy/2-1e-6<=y<=dy-fy/2+1e-6): return False   # inside room-margin
+        if not (ax+fx/2-1e-6<=x<=cx_-fx/2+1e-6 and ay+fy/2-1e-6<=y<=dy-fy/2+1e-6): return False   # inside room margin
         if any((x-ex)**2+(y-ey)**2<1.3**2 for ex,ey in doors_xy): return False                     # keep every doorway clear
-        if STR[0]-0.3<x<STR[1]+0.3 and STR[2]-0.3<y<STR[3]+0.3: return False                       # stairwell keep-out
+        if STR[0]-0.3<x<STR[1]+0.3 and STR[2]-0.3<y<STR[3]+0.3: return False                       # stairwell keep out
         for px,py,pfx,pfy in placed:
             if abs(x-px)<(fx+pfx)/2+0.15 and abs(y-py)<(fy+pfy)/2+0.15: return False               # no overlap
         return True
@@ -196,22 +195,20 @@ def furnish(a,b,c,dd,fl,rng,tag,dwall,dpos,extra_clear=()):
     if span>=1.6:
         wb=min(1.4,span-0.4); on_wall(lambda x,y: whiteboard(f'{tag}wb',x,y,z,horiz=(opp in('N','S')),w=wb),opp,0.06,wb/2)
 
-# ---- Floor plan: 7 rooms + stairwell wrapped around a THIN open corridor ring (H=[-4,4]) ----
-# Corridor = interior of H minus atrium: a 1.5 m ring the drone flies through. Rooms are a pinwheel of
-# arms split into sensible rooms; EVERY room opens onto the ring with exactly ONE uniform DW door and no
-# wall behind it. N1<->N2 also share a connecting door in their partition (extra keep-clear for furniture).
-#   (x0,y0,x1,y1, door_wall, door_pos, tag)
-ROOMS=[(-4,4, 2,8,'S',-1,'N1'),( 2,4,10,8,'S', 3,'N2'),        # north band  (2 rooms)
-       (-10,1,-4,8,'E', 2.5,'W1'),(-10,-4,-4,1,'E',-1.5,'W2'),  # west band   (2 rooms)
-       (-10,-8,-2,-4,'N',-3,'S1'),(-2,-8,4,-4,'N',1,'S2'),      # south band  (2; S2 = entrance lobby zone)
-       (4,-2,10,4,'W', 1,'E1')]                                 # east room   (1 big; shortened so stair door clears)
-CONNECT={'N1':[(2,6)],'N2':[(2,6)],'W1':[(-7,1)],'W2':[(-7,1)]}  # TWO connecting doors/floor: N1<->N2 (x=2,y=6) & W1<->W2 (x=-7,y=1)
+# Floor plan of 7 rooms and a stairwell wrapped around a thin open corridor ring.
+# Every room opens onto the ring with exactly one uniform door and no wall behind it.
+# Each entry is x0, y0, x1, y1, door wall, door position, tag.
+ROOMS=[(-4,4, 2,8,'S',-1,'N1'),( 2,4,10,8,'S', 3,'N2'),        # north band (2 rooms)
+       (-10,1,-4,8,'E', 2.5,'W1'),(-10,-4,-4,1,'E',-1.5,'W2'),  # west band (2 rooms)
+       (-10,-8,-2,-4,'N',-3,'S1'),(-2,-8,4,-4,'N',1,'S2'),      # south band (2; S2 = entrance lobby zone)
+       (4,-2,10,4,'W', 1,'E1')]                                 # east room (1 big; shortened so stair door clears)
+CONNECT={'N1':[(2,6)],'N2':[(2,6)],'W1':[(-7,1)],'W2':[(-7,1)]}  # TWO connecting doors/floor. N1<->N2 (x=2,y=6) & W1<->W2 (x 7,y=1)
 def walls(fl):
     global CURGRP; CURGRP='L%d'%(fl+1); z=FLOORZ[fl]; h=FH-SLAB-0.1
-    W=[(-4,4,4,4,[(-1,DW),(3,DW)]), (-4,-4,4,-4,[(-3,DW),(1,DW)]),  # corridor ring: top / bottom (doors)
-       (-4,-4,-4,4,[(2.5,DW),(-1.5,DW)]), (4,-4,4,4,[(1,DW),(-3,DW)]),  # ring: left / right (right-lower door = stairwell, at y=-3)
-       (4,4,10,4,[]), (4,-8,4,-4,[]), (-4,4,-4,8,[]), (-10,-4,-4,-4,[]),  # inter-arm solid seams
-       (2,4,2,8,[(6,DW)]), (-10,1,-4,1,[(-7,DW)]), (-2,-8,-2,-4,[]), (4,-2,10,-2,[])]  # partitions: N1/N2 & W1/W2 connecting doors; E1/STAIR moved to y=-2
+    W=[(-4,4,4,4,[(-1,DW),(3,DW)]), (-4,-4,4,-4,[(-3,DW),(1,DW)]),  # corridor ring. top / bottom (doors)
+       (-4,-4,-4,4,[(2.5,DW),(-1.5,DW)]), (4,-4,4,4,[(1,DW),(-3,DW)]),  # ring. left / right (right lower door = stairwell, at y 3)
+       (4,4,10,4,[]), (4,-8,4,-4,[]), (-4,4,-4,8,[]), (-10,-4,-4,-4,[]),  # inter arm solid seams
+       (2,4,2,8,[(6,DW)]), (-10,1,-4,1,[(-7,DW)]), (-2,-8,-2,-4,[]), (4,-2,10,-2,[])]  # partitions. N1/N2 & W1/W2 connecting doors; E1/STAIR moved to y 2
     for i,(x0,y0,x1,y1,dr) in enumerate(W): wall_run(f'w{fl}_{i}',x0,y0,x1,y1,z,h,doors=dr)
 def furnish_floor(fl,skip=()):
     global CURGRP; CURGRP='L%d'%(fl+1); rng=random.Random(fl)
@@ -220,16 +217,16 @@ def furnish_floor(fl,skip=()):
         furnish(a,b,c,dd,fl,rng,f'f{fl}_{tag}',dwall,dpos,extra_clear=CONNECT.get(tag,()))
 walls(1); walls(2)
 for fl in (1,2): furnish_floor(fl)
-# ---- GROUND FLOOR: open plan (no interior walls), densely furnished ----
+# GROUND FLOOR. open plan (no interior walls), densely furnished
 CURGRP='L1'
-furnish_floor(0,skip=('S2',))                                  # furniture clusters in the 6 non-lobby zones
-# entrance lobby in the open S2 zone (west of the entrance lane x~[1.7,3.3], which stays clear for fly-in)
+furnish_floor(0,skip=('S2',))                                  # furniture clusters in the 6 non lobby zones
+# entrance lobby in the open S2 zone (west of the entrance lane x~[1.7,3.3], which stays clear for fly in)
 add('reception',-0.4,-6.6,0.5,2.2,0.8,1.05,ALL,'Gazebo/Wood',WOOD)
 add('recdesk_t',-0.4,-6.6,1.11,2.2,0.8,0.04,['+z'],'Gazebo/DarkGrey',(55,55,55))
 chair('recch',-0.4,-7.3,0,fy=-1)
 sofa('lsofaW',-1.5,-4.9,0,False); plant('lpW',0.7,-5.0,0); chair('lch2',-0.4,-5.6,0,fy=1)
 
-# ================= write world (per-floor models) =================
+# write world (per-floor models)
 HEAD=open(os.path.join(ROOT,'worlds','grass_plane_school.world')).read()
 HEAD=HEAD[:HEAD.index("    <model name='school'>")]
 def link(n,cx,cy,cz,sx,sy,sz,m):
@@ -249,13 +246,12 @@ with open(FW,'w') as f:
     f.write("  </world>\n</sdf>\n")
 print(f'wrote {FW} ({len(boxes)} links in {len(groups)} models: '+", ".join(f"{g}:{len(groups.get(g,[]))}" for g in ['shell','L1','L2','L3','core','roof'])+")")
 
-# ================= GT =================
+# GT
 def fr(a,b):
     n=max(1,int(round((b-a)/D))); return [a+(i+0.5)*(b-a)/n for i in range(n)]
-# ---- observable-surface filter ----
-# GT samples ONLY box faces (surfaces, never interior volume). This additionally DROPS any face sample
-# whose outward side is buried inside another solid box (floor under walls, furniture backs on walls,
-# corner overlaps): those surfaces are occluded and can never be reconstructed by the sensor.
+# Observable surface filter.
+# Ground truth samples box faces only and never interior volume.
+# Any face sample whose outward side is buried in another solid box is dropped as unobservable.
 import math as _m
 _CELL=1.0; _grid={}
 for _bi,_b in enumerate(boxes):
