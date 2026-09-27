@@ -1,14 +1,11 @@
 #!/bin/bash
-# Load every world and report which models actually spawn and which assets are missing.
-# Usage: check_worlds.sh [--gui] [world ...]     HOLD_S=30 keeps each world up that long.
-#
-# Worlds are launched through roslaunch, not bare gzserver: gazebo_ros_paths_plugin is what
-# turns the package.xml <gazebo_ros> export tags into GAZEBO_MODEL_PATH and
-# GAZEBO_RESOURCE_PATH, so a bare gzserver never sees the MRS models and every world with an
-# external mesh looks broken.
-# Readiness is taken from /gazebo/get_world_properties, never from a log line: "Publicized
-# address" is printed before the world is parsed and reports success for a world that has not
-# loaded a single model.
+# Loads every world and reports which models spawn and which assets are missing.
+# Run it as check_worlds.sh [--gui] [world ...] and set HOLD_S to keep each world up.
+# Worlds go through roslaunch rather than bare gzserver.
+# gazebo_ros_paths_plugin turns the package.xml export tags into the gazebo search paths.
+# A bare gzserver never gets them so every world with an external mesh would look broken.
+# Readiness comes from /gazebo/get_world_properties and never from a log line.
+# gzserver prints "Publicized address" before it parses the world so that line means nothing.
 
 gui=false
 [ "${1:-}" = "--gui" ] && { gui=true; shift; }
@@ -23,12 +20,11 @@ worlds=()
 for a in "$@"; do worlds+=("$(cd "$(dirname "$a")" && pwd)/$(basename "$a")"); done
 [ ${#worlds[@]} -eq 0 ] && worlds=("$W"/*.world)
 
-# Resolve every asset URI the way gazebo does. A model whose mesh is missing still spawns as a
-# named entity with no geometry, so the service check alone cannot see it: that is how the
-# absent maze mesh passed as "5/5 models".
-# The search paths come from rospack, not from the environment: gazebo_ros_paths_plugin adds
-# the package.xml <gazebo_ros> export paths inside the gzserver process, so they never appear
-# in the environment or in /proc/<pid>/environ.
+# Resolves every asset URI the way gazebo does.
+# A model with a missing mesh still spawns as a named entity holding no geometry.
+# The service check cannot see that, which is how an absent maze mesh once passed as 5 of 5.
+# Search paths come from rospack because the plugin adds them inside the gzserver process.
+# They never appear in the environment or in /proc/<pid>/environ.
 GZ_MODEL_PATHS=$( { rospack plugins --attrib=gazebo_model_path gazebo_ros 2>/dev/null | awk '{print $2}'
                     echo "$GAZEBO_MODEL_PATH" | tr ':' '\n'; } | grep . | sort -u | paste -sd: )
 GZ_MEDIA_PATHS=$( { rospack plugins --attrib=gazebo_media_path gazebo_ros 2>/dev/null | awk '{print $2}'
@@ -45,7 +41,7 @@ def found(roots, rest):
     for r in roots:
         if os.path.exists(os.path.join(r, rest)):
             return 'exact'
-    # second pass ignoring case, so a pre-existing case wart is reported apart from a real miss
+    # Second pass ignores case so a spelling mismatch is reported apart from a real miss.
     for r in roots:
         cur, ok = r, True
         for part in rest.split('/'):
@@ -67,8 +63,7 @@ for u in {e.text.strip() for e in ET.parse(sys.argv[1]).getroot().iter('uri') if
     if u.startswith('model://'):
         rest, roots = u[len('model://'):], mp
     elif u.startswith('file://'):
-        # gazebo falls back to the model paths for file:// too, which is how grass_plane
-        # resolves: it sits under <pkg>/models/grass_plane, not at the media root
+        # gazebo falls back to the model paths for file:// too, which is how grass_plane resolves.
         rest, roots = u[len('file://'):], rp + mp
     else:
         continue

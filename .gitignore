@@ -1,6 +1,3 @@
-# The maze mesh is fetched, never redistributed: its upstream repo carries no license.
-models/maze/
-
 *.pyc
 __pycache__/
 *.swp

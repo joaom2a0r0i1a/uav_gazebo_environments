@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-# gen_warehouse.py: cluttered box-primitive warehouse -> grass_plane_warehouse.world + exact GT ply.
-# Split into SEPARATE models (warehouse_shell / _racks / _loads / _dock) so parts can be toggled in the GUI.
-# Real pallet racking (uprights/beams/decks) with pallets + carton stacks; a proper loading DOCK (raised
-# platform + open roll-up door) on the east; a personnel entrance on the west. Walls have REAL openings so
-# windows/doors read from BOTH sides. Coloured like a real warehouse (tan metal siding, slate wainscot,
-# blue doors). GT = analytic SURFACE sampling of the SAME boxes, observable-only, clamped to the interior
-# BBX (nothing outside the walls). Reproducible (fixed seed).
+# Builds the cluttered warehouse world and its analytic ground truth cloud.
+# Real pallet racking with uprights, beams, decks, pallets and carton stacks.
+# A raised loading dock with an open roll up door on the east and a personnel entrance west.
+# Walls carry real openings so windows and doors read from both sides.
+# Ground truth is analytic surface sampling of the same boxes, observable only, clamped to the interior box.
 import os, struct, random
 random.seed(7)
 
@@ -21,11 +19,10 @@ BAY_PITCH    = 2.5
 LEVELS_Z     = [0.20, 1.45, 2.70]       # shelf-deck heights
 FILL_PROB    = 0.62
 D            = 0.06                       # GT sample spacing (m)
-WORLDS    = os.path.dirname(os.path.abspath(__file__))
-WORLD_OUT = os.path.join(WORLDS, 'grass_plane_warehouse.world')
-# The ground truth cloud is consumed by the evaluation package, so it is written there by
-# default and GT_OUT overrides it when this package is used on its own.
-PLY_OUT   = os.environ.get('GT_OUT', os.path.join(WORLDS, '..', '..', 'UAV_3D_reconstruction', 'single',
+ROOT      = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WORLD_OUT = os.path.join(ROOT, 'worlds', 'grass_plane_warehouse.world')
+# The evaluation package consumes this cloud so it lands there unless GT_OUT says otherwise.
+PLY_OUT   = os.environ.get('GT_OUT', os.path.join(ROOT, '..', 'UAV_3D_reconstruction', 'single',
                            'motion_planning', 'data', 'gt_warehouse_processed.ply'))
 HX, HY = LX/2.0, LY/2.0                   # 20, 12  == eval bounded_box (Warehouse.yaml)
 IXW, IYW = HX-WT/2, HY-WT/2               # inner wall faces (19.9, 11.9)

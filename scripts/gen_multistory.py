@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
-# gen_multistory.py: 3-floor office, ALL colored primitives (exact analytic GT).
-# Fixed pinwheel floor plan around an OPEN corridor ring: 7 rooms + stairwell per floor, EVERY room
-# opens to the corridor with one UNIFORM door; open central atrium shaft; per-floor window bands (black
-# glass); exterior entrance + canopy on the south wall; furniture/clutter. Emitted as SEPARATE per-floor
-# models (building_shell / _L1 / _L2 / _L3 / _core / _roof) so floors can be hidden in the GUI.
+# Builds the 3 floor office world and its analytic ground truth cloud.
+# Fixed pinwheel floor plan around an open corridor ring, 7 rooms plus a stairwell per floor.
+# Every room opens to the corridor with one uniform door and the central atrium shaft is open.
+# Emitted as separate per floor models so floors can be hidden in the GUI.
 import os, struct, random
-WORLDS=os.path.dirname(os.path.abspath(__file__))
-FW=os.path.join(WORLDS,'grass_plane_multistory.world')
-# The ground truth cloud is consumed by the evaluation package, so it is written there by
-# default and GT_OUT overrides it when this package is used on its own.
-PLY=os.environ.get('GT_OUT', os.path.join(WORLDS,'..','..','UAV_3D_reconstruction','single',
+ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FW=os.path.join(ROOT,'worlds','grass_plane_multistory.world')
+# The evaluation package consumes this cloud so it lands there unless GT_OUT says otherwise.
+PLY=os.environ.get('GT_OUT', os.path.join(ROOT,'..','UAV_3D_reconstruction','single',
                    'motion_planning','data','gt_multistory_processed.ply'))
 X0,X1,Y0,Y1=-10.0,10.0,-8.0,8.0
 FH=3.3; SLAB=0.3; WT=0.15; ROOFZ=3*FH; FLOORZ=[0.0,FH,2*FH]
@@ -232,7 +230,7 @@ chair('recch',-0.4,-7.3,0,fy=-1)
 sofa('lsofaW',-1.5,-4.9,0,False); plant('lpW',0.7,-5.0,0); chair('lch2',-0.4,-5.6,0,fy=1)
 
 # ================= write world (per-floor models) =================
-HEAD=open(os.path.join(WORLDS,'grass_plane_school.world')).read()
+HEAD=open(os.path.join(ROOT,'worlds','grass_plane_school.world')).read()
 HEAD=HEAD[:HEAD.index("    <model name='school'>")]
 def link(n,cx,cy,cz,sx,sy,sz,m):
     return (f"      <link name='{n}'><pose>{cx:g} {cy:g} {cz:g} 0 0 0</pose>"
