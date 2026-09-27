@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>environments</name>
+  <version>0.1.0</version>
+  <description>Gazebo worlds and models for the UAV 3D reconstruction simulations.</description>
+  <maintainer email="joao.felix.mendes@tecnico.ulisboa.pt">Joao Mendes</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>gazebo_ros</exec_depend>
+
+  <export>
+    <!-- gazebo_ros_paths_plugin adds these inside gzserver, which is what makes model:// and
+         file:// resolve under roslaunch; the env-hook only covers plain shells. -->
+    <gazebo_ros gazebo_model_path="${prefix}/models"/>
+    <gazebo_ros gazebo_media_path="${prefix}"/>
+  </export>
+</package>
