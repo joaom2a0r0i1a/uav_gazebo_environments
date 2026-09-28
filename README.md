@@ -3,8 +3,7 @@
 This repository contains the Gazebo worlds used in the UAV exploration and 3D reconstruction
 experiments of [UAV_3D_reconstruction](https://github.com/joaom2a0r0i1a/UAV_3D_reconstruction),
 where it is included as a submodule. For each world, `config/<environment>.yaml` gives the spawn
-position and the planning, gain and reconstruction regions used by the planners and the
-evaluation.
+position and the planning, gain and reconstruction regions.
 
 ## Worlds
 
@@ -22,8 +21,8 @@ an existing model on a grass plane.
 
 ## Model credits
 
-The models below are not mine. They are included so the worlds load without extra downloads, and
-each one belongs to its author.
+The models below belong to their authors and are included so the worlds load without extra
+downloads.
 
 | model | author | taken from |
 |---|---|---|
@@ -33,8 +32,8 @@ each one belongs to its author.
 | `grass_plane` | Petr Stibinger, CTU MRS | [`mrs_gazebo_common_resources`](https://github.com/ctu-mrs/mrs_gazebo_common_resources), BSD 3-Clause |
 | `maze` | Zhefan Xu, CMU | [`Zhefan-Xu/drone_gazebo`](https://github.com/Zhefan-Xu/drone_gazebo) |
 
-The maze comes from a repository without a license file. It is included for the reproducibility
-of the experiments and credited to its author, who can ask for its removal by opening an issue.
+The maze comes from a repository without a license file. It is included to reproduce the
+experiments, and its author can ask for its removal by opening an issue.
 
 ## Use
 
@@ -69,9 +68,9 @@ Every world loads two plugins from
         filename='libMrsGazeboCommonResources_RvizCameraSynchronizer.so'>
 ```
 
-The static transform republisher provides the transforms used by the mapping and planning nodes,
-and the camera synchroniser keeps an RViz view aligned with a Gazebo camera. Without MRS, Gazebo
-reports that it cannot load them and opens the world normally.
+The static transform republisher publishes the transforms used by the mapping and planning nodes,
+and the camera synchroniser aligns an RViz view with a Gazebo camera. Without MRS, both plugins
+fail to load and the world still opens.
 
 To use a world without MRS, remove both plugin lines from it and publish the static transforms
 yourself. Nothing else in the worlds depends on MRS.
@@ -85,8 +84,7 @@ scripts/check_worlds.sh --gui      # with the Gazebo window
 
 Each world is launched on its own Gazebo master and counts as loaded when
 `/gazebo/get_world_properties` answers. The script also checks that every model file used by the
-world exists, since a model with a missing mesh still loads but has no geometry. All worlds report
-a case mismatch for `Gazebo.material`, which is harmless.
+world exists. The case mismatch reported for `Gazebo.material` is harmless.
 
 ## Ground truth
 
@@ -96,7 +94,6 @@ for `school` and `police`. The warehouse, multistory and big maze are evaluated 
 ## Generators
 
 `scripts/gen_multistory.py` and `scripts/gen_warehouse.py` generate their world file and a ground
-truth cloud, written to `ground_truth/` or to the path in `GT_OUT`. Both reproduce their world
-exactly. The multistory cloud has the same geometry on every run, but about 6000 of its 1.29 M
-points change colour between runs, which does not affect the evaluation. The big maze has no
-generator.
+truth cloud in `ground_truth/`. `GT_OUT` sets another path for the cloud. Both reproduce their
+world exactly. The multistory cloud keeps the same geometry on every run, only the colour of about
+6000 of its 1.29 M points changes. The big maze has no generator.
