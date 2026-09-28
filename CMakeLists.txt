@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(environments)
+project(uav_gazebo_environments)
 
 find_package(catkin REQUIRED)
 catkin_package()

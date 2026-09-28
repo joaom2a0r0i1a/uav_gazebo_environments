@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>environments</name>
+  <name>uav_gazebo_environments</name>
   <version>0.1.0</version>
   <description>Gazebo worlds and models for UAV exploration and 3D reconstruction simulations.</description>
   <maintainer email="joao.felix.mendes@tecnico.ulisboa.pt">Joao Mendes</maintainer>

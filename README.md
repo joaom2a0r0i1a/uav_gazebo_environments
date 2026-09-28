@@ -47,14 +47,14 @@ Clone into a catkin workspace and build:
 ```bash
 cd <catkin_ws>/src
 git clone git@github.com:joaom2a0r0i1a/uav_gazebo_environments.git
-cd .. && catkin build environments && source devel/setup.bash
+cd .. && catkin build uav_gazebo_environments && source devel/setup.bash
 ```
 
 Then launch a world:
 
 ```bash
 roslaunch gazebo_ros empty_world.launch \
-  world_name:=$(rospack find environments)/worlds/grass_plane_school.world
+  world_name:=$(rospack find uav_gazebo_environments)/worlds/grass_plane_school.world
 ```
 
 Model paths come from the `<gazebo_ros>` export tags in `package.xml`, which
