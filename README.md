@@ -1,12 +1,10 @@
 # uav_gazebo_environments
 
-Gazebo worlds used for UAV exploration and 3D reconstruction experiments.
-
-It is the `uav_gazebo_environments` submodule of
-[UAV_3D_reconstruction](https://github.com/joaom2a0r0i1a/UAV_3D_reconstruction), which pins
-the commit it uses. Clone that repository with `--recursive` rather than this one on its own.
-`config/<environment>.yaml` holds each world's spawn and its planning, gain and reconstruction
-regions, read by the planners and the evaluation there.
+This repository contains the Gazebo worlds used in the UAV exploration and 3D reconstruction
+experiments of [UAV_3D_reconstruction](https://github.com/joaom2a0r0i1a/UAV_3D_reconstruction),
+where it is included as a submodule. For each world, `config/<environment>.yaml` gives the spawn
+position and the planning, gain and reconstruction regions used by the planners and the
+evaluation.
 
 ## Worlds
 
@@ -19,13 +17,13 @@ regions, read by the planners and the evaluation there.
 | `grass_plane_police_station.world` | police station on a grass plane | arrangement mine, `police_station` model is not |
 | `grass_plane_maze.world` | maze plus two closing walls | arrangement mine, `maze` and `grey_wall` models are not |
 
-Only the multistory, the warehouse and the big maze are my own geometry. The other three
-worlds are arrangements that place an existing model on a grass plane.
+The multistory, the warehouse and the big maze are my own geometry. The other three worlds place
+an existing model on a grass plane.
 
 ## Model credits
 
-None of the models below are mine. They are included so the worlds load without chasing
-downloads, and each one belongs to its author.
+The models below are not mine. They are included so the worlds load without extra downloads, and
+each one belongs to its author.
 
 | model | author | taken from |
 |---|---|---|
@@ -35,14 +33,13 @@ downloads, and each one belongs to its author.
 | `grass_plane` | Petr Stibinger, CTU MRS | [`mrs_gazebo_common_resources`](https://github.com/ctu-mrs/mrs_gazebo_common_resources), BSD 3-Clause |
 | `maze` | Zhefan Xu, CMU | [`Zhefan-Xu/drone_gazebo`](https://github.com/Zhefan-Xu/drone_gazebo) |
 
-The maze comes from a repository that carries **no license file**, so no terms were granted
-with it. It is kept here for reproducibility of the experiments and credited to its author.
-If you are the author and would rather it were not redistributed, open an issue and it will
-be removed.
+The maze comes from a repository without a license file. It is included for the reproducibility
+of the experiments and credited to its author, who can ask for its removal by opening an issue.
 
 ## Use
 
-Clone into a catkin workspace and build:
+The worlds come with UAV_3D_reconstruction. They can also be used on their own in a catkin
+workspace:
 
 ```bash
 cd <catkin_ws>/src
@@ -50,18 +47,17 @@ git clone git@github.com:joaom2a0r0i1a/uav_gazebo_environments.git
 cd .. && catkin build uav_gazebo_environments && source devel/setup.bash
 ```
 
-Then launch a world:
+A world is then launched with:
 
 ```bash
 roslaunch gazebo_ros empty_world.launch \
   world_name:=$(rospack find uav_gazebo_environments)/worlds/grass_plane_school.world
 ```
 
-Model paths come from the `<gazebo_ros>` export tags in `package.xml`, which
-`gazebo_ros_paths_plugin` applies inside gzserver. `env-hooks/` sets the same paths for plain
-shells that run `gzserver` without roslaunch.
+The model paths come from the `gazebo_ros` export in `package.xml`, and `env-hooks/` sets the same
+paths for shells that run `gzserver` directly.
 
-## Running without the MRS stack
+## Running without MRS
 
 Every world loads two plugins from
 [`mrs_gazebo_common_resources`](https://github.com/ctu-mrs/mrs_gazebo_common_resources):
@@ -73,26 +69,24 @@ Every world loads two plugins from
         filename='libMrsGazeboCommonResources_RvizCameraSynchronizer.so'>
 ```
 
-They exist for the MRS simulation setup. The static transform republisher feeds the TF tree
-that the mapping and planning nodes expect, and the camera synchroniser keeps an RViz view
-aligned with a Gazebo camera. Without MRS installed, Gazebo prints a failure to load each one
-and carries on, so the world still opens and the geometry is all there.
+The static transform republisher provides the transforms used by the mapping and planning nodes,
+and the camera synchroniser keeps an RViz view aligned with a Gazebo camera. Without MRS, Gazebo
+reports that it cannot load them and opens the world normally.
 
-If you are not running MRS, delete both `<plugin>` lines from the world you want and supply
-your own static transforms. Nothing else in these worlds depends on MRS.
+To use a world without MRS, remove both plugin lines from it and publish the static transforms
+yourself. Nothing else in the worlds depends on MRS.
 
 ## Checking the worlds
 
 ```bash
 scripts/check_worlds.sh            # all worlds, headless
-scripts/check_worlds.sh --gui      # watch them load
+scripts/check_worlds.sh --gui      # with the Gazebo window
 ```
 
-Each world is launched on its own Gazebo master port and readiness comes from
-`/gazebo/get_world_properties`. A model whose mesh is missing still spawns as a named entity
-with no geometry, so the script also resolves every asset URI and reports the ones that do not
-exist. All six worlds report `Gazebo.material` as a case mismatch, because the world files
-spell it with a capital G while the file on disk is `gazebo.material`. It is harmless.
+Each world is launched on its own Gazebo master and counts as loaded when
+`/gazebo/get_world_properties` answers. The script also checks that every model file used by the
+world exists, since a model with a missing mesh still loads but has no geometry. All worlds report
+a case mismatch for `Gazebo.material`, which is harmless.
 
 ## Ground truth
 
@@ -101,14 +95,8 @@ for `school` and `police`. The warehouse, multistory and big maze are evaluated 
 
 ## Generators
 
-`scripts/gen_multistory.py` and `scripts/gen_warehouse.py` write their world file and an
-analytic ground truth cloud. Both reproduce their world byte for byte. The cloud goes to
-`ground_truth/`, untracked since those worlds are evaluated by volume, and `GT_OUT` sends it
-elsewhere.
-
-`gen_multistory.py` is not fully reproducible in the cloud it writes. Geometry, normals and
-indices come out bit identical every run, but about 6000 of its 1.29 M points change colour
-between runs. Colour is not used by the evaluation.
-
-There is no generator for `big_maze.world`, and the maze and the other imported models have
-none by nature.
+`scripts/gen_multistory.py` and `scripts/gen_warehouse.py` generate their world file and a ground
+truth cloud, written to `ground_truth/` or to the path in `GT_OUT`. Both reproduce their world
+exactly. The multistory cloud has the same geometry on every run, but about 6000 of its 1.29 M
+points change colour between runs, which does not affect the evaluation. The big maze has no
+generator.
