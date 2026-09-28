@@ -1,0 +1,32 @@
+# Police Station Environment
+
+# Gazebo world and spawn pose (x y z heading)
+world: grass_plane_police_station.world
+spawn: [-12, 0, 0.5, 0]
+
+# Planner sampling region
+planning_box:
+  min_x: -15.0
+  max_x: 15.0
+  min_y: -20.0
+  max_y: 15.0
+  min_z: 1.0
+  max_z: 20.0
+
+# Information gain region
+gain_box:
+  min_x: -7.0
+  max_x: 7.0
+  min_y: -8.5
+  max_y: 8.5
+  min_z: 0.0
+  max_z: 9.0
+
+# Reconstruction evaluation region
+reconstruction_box:
+  min_x: -7.0
+  max_x: 7.0
+  min_y: -10.0
+  max_y: 10.0
+  min_z: 0.0
+  max_z: 9.0

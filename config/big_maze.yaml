@@ -1,0 +1,32 @@
+# Big Maze Environment
+
+# Gazebo world and spawn pose (x y z heading)
+world: big_maze.world
+spawn: [0, 0, 0.5, 0]
+
+# Planner sampling region
+planning_box:
+  min_x: -20.0
+  max_x: 20.0
+  min_y: -20.0
+  max_y: 20.0
+  min_z: 0.5
+  max_z: 1.8
+
+# Information gain region
+gain_box:
+  min_x: -20.0
+  max_x: 20.0
+  min_y: -20.0
+  max_y: 20.0
+  min_z: 0.0
+  max_z: 2.5
+
+# Reconstruction evaluation region
+reconstruction_box:
+  min_x: -20.0
+  max_x: 20.0
+  min_y: -20.0
+  max_y: 20.0
+  min_z: 0.0
+  max_z: 2.5

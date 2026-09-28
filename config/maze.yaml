@@ -1,0 +1,32 @@
+# Maze Environment
+
+# Gazebo world and spawn pose (x y z heading)
+world: grass_plane_maze.world
+spawn: [8.5, 7.5, 0.5, 3.14]
+
+# Planner sampling region
+planning_box:
+  min_x: -10.0
+  max_x: 10.0
+  min_y: -9.0
+  max_y: 9.0
+  min_z: 0.2
+  max_z: 2.5
+
+# Information gain region
+gain_box:
+  min_x: -10.0
+  max_x: 10.0
+  min_y: -9.0
+  max_y: 9.0
+  min_z: 0.0
+  max_z: 2.5
+
+# Reconstruction evaluation region
+reconstruction_box:
+  min_x: -10.0
+  max_x: 10.0
+  min_y: -9.0
+  max_y: 9.0
+  min_z: 0.0
+  max_z: 2.5

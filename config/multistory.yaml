@@ -1,0 +1,35 @@
+# Multi-Story Environment
+
+# Gazebo world and spawn pose (x y z heading)
+world: grass_plane_multistory.world
+spawn: [0, 0, 1.0, 1.57]
+
+# Planner sampling region
+planning_box:
+  min_x: -10.0
+  max_x: 10.0
+  min_y: -8.0
+  max_y: 8.0
+  min_z: 0.5
+  max_z: 9.8
+
+# Information gain region
+gain_box:
+  min_x: -10.0
+  max_x: 10.0
+  min_y: -8.0
+  max_y: 8.0
+  min_z: 0.0
+  max_z: 9.9
+
+# Reconstruction evaluation region
+reconstruction_box:
+  min_x: -10.0
+  max_x: 10.0
+  min_y: -8.0
+  max_y: 8.0
+  min_z: 0.0
+  max_z: 9.9
+
+# Volume that no sensor can observe
+unobservable_volume: 88.5 # [m3]
