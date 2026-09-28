@@ -94,12 +94,17 @@ with no geometry, so the script also resolves every asset URI and reports the on
 exist. All six worlds report `Gazebo.material` as a case mismatch, because the world files
 spell it with a capital G while the file on disk is `gazebo.material`. It is harmless.
 
+## Ground truth
+
+`ground_truth/<environment>.ply` holds the reference cloud the reconstruction is scored against,
+for `school` and `police`. The warehouse, multistory and big maze are evaluated by volume.
+
 ## Generators
 
 `scripts/gen_multistory.py` and `scripts/gen_warehouse.py` write their world file and an
-analytic ground truth cloud. Both reproduce their world byte for byte. The cloud goes to the
-evaluation package of the parent repository, which holds this one as its `Environments`
-submodule, and `GT_OUT` sends it elsewhere.
+analytic ground truth cloud. Both reproduce their world byte for byte. The cloud goes to
+`ground_truth/`, untracked since those worlds are evaluated by volume, and `GT_OUT` sends it
+elsewhere.
 
 `gen_multistory.py` is not fully reproducible in the cloud it writes. Geometry, normals and
 indices come out bit identical every run, but about 6000 of its 1.29 M points change colour

@@ -21,9 +21,8 @@ FILL_PROB    = 0.62
 D            = 0.06                       # GT sample spacing (m)
 ROOT      = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WORLD_OUT = os.path.join(ROOT, 'worlds', 'grass_plane_warehouse.world')
-# The evaluation package consumes this cloud so it lands there unless GT_OUT says otherwise.
-PLY_OUT   = os.environ.get('GT_OUT', os.path.join(ROOT, '..', 'single', 'motion_planning', 'data',
-                           'gt_warehouse_processed.ply'))
+# Ground truth cloud, GT_OUT overrides the location
+PLY_OUT   = os.environ.get('GT_OUT', os.path.join(ROOT, 'ground_truth', 'warehouse.ply'))
 HX, HY = LX/2.0, LY/2.0                   # 20, 12 eval bounded_box (Warehouse.yaml)
 IXW, IYW = HX-WT/2, HY-WT/2               # inner wall faces (19.9, 11.9)
 
