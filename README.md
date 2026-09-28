@@ -2,6 +2,12 @@
 
 Gazebo worlds used for UAV exploration and 3D reconstruction experiments.
 
+It is the `Environments` submodule of
+[UAV_3D_reconstruction](https://github.com/joaom2a0r0i1a/UAV_3D_reconstruction), which pins
+the commit it uses. Clone that repository with `--recursive` rather than this one on its own.
+`config/<environment>.yaml` holds each world's spawn and its planning, gain and reconstruction
+regions, read by the planners and the evaluation there.
+
 ## Worlds
 
 | world | what it is | who made it |
@@ -92,7 +98,8 @@ spell it with a capital G while the file on disk is `gazebo.material`. It is har
 
 `scripts/gen_multistory.py` and `scripts/gen_warehouse.py` write their world file and an
 analytic ground truth cloud. Both reproduce their world byte for byte. The cloud goes to the
-evaluation package by default and `GT_OUT` sends it elsewhere.
+evaluation package of the parent repository, which holds this one as its `Environments`
+submodule, and `GT_OUT` sends it elsewhere.
 
 `gen_multistory.py` is not fully reproducible in the cloud it writes. Geometry, normals and
 indices come out bit identical every run, but about 6000 of its 1.29 M points change colour

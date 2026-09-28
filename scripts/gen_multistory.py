@@ -7,8 +7,8 @@ import os, struct, random
 ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FW=os.path.join(ROOT,'worlds','grass_plane_multistory.world')
 # The evaluation package consumes this cloud so it lands there unless GT_OUT says otherwise.
-PLY=os.environ.get('GT_OUT', os.path.join(ROOT,'..','UAV_3D_reconstruction','single',
-                   'motion_planning','data','gt_multistory_processed.ply'))
+PLY=os.environ.get('GT_OUT', os.path.join(ROOT,'..','single','motion_planning','data',
+                   'gt_multistory_processed.ply'))
 X0,X1,Y0,Y1=-10.0,10.0,-8.0,8.0
 FH=3.3; SLAB=0.3; WT=0.15; ROOFZ=3*FH; FLOORZ=[0.0,FH,2*FH]
 ATR=(-2.5,2.5,-2.5,2.5); STR=(4.0,10.0,-8.0,-2.0); D=0.06; WBOT,WTOP=1.1,2.3
