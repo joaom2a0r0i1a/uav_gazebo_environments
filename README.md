@@ -2,7 +2,7 @@
 
 Gazebo worlds used for UAV exploration and 3D reconstruction experiments.
 
-It is the `Environments` submodule of
+It is the `uav_gazebo_environments` submodule of
 [UAV_3D_reconstruction](https://github.com/joaom2a0r0i1a/UAV_3D_reconstruction), which pins
 the commit it uses. Clone that repository with `--recursive` rather than this one on its own.
 `config/<environment>.yaml` holds each world's spawn and its planning, gain and reconstruction
