@@ -7,17 +7,17 @@ position and the planning, gain and reconstruction regions.
 
 ## Worlds
 
-| world | what it is | who made it |
+| world | what it is | origin |
 |---|---|---|
-| `grass_plane_multistory.world` | 3 floor office, box primitives | mine, from `scripts/gen_multistory.py` |
-| `grass_plane_warehouse.world` | racking, pallets and a loading dock | mine, from `scripts/gen_warehouse.py` |
-| `big_maze.world` | large maze, box primitives | mine |
-| `grass_plane_school.world` | school on a grass plane | arrangement mine, `school` model is not |
-| `grass_plane_police_station.world` | police station on a grass plane | arrangement mine, `police_station` model is not |
-| `grass_plane_maze.world` | maze plus two closing walls | arrangement mine, `maze` and `grey_wall` models are not |
+| `grass_plane_multistory.world` | 3 floor office, boxes | made for this repository |
+| `grass_plane_warehouse.world` | racking, pallets and a loading dock | made for this repository |
+| `big_maze.world` | large maze | made for this repository |
+| `grass_plane_school.world` | school on a grass plane | made for this repository, `school` model credited below |
+| `grass_plane_police_station.world` | police station on a grass plane | made for this repository, `police_station` model credited below |
+| `grass_plane_maze.world` | maze plus two closing walls | made for this repository, `maze` and `grey_wall` models credited below |
 
-The multistory, the warehouse and the big maze are my own geometry. The other three worlds place
-an existing model on a grass plane.
+The multistory, the warehouse and the big maze were made for this repository. The other three
+worlds place an existing model on a grass plane.
 
 ## Model credits
 
@@ -33,7 +33,7 @@ downloads.
 | `maze` | Zhefan Xu, CMU | [`Zhefan-Xu/drone_gazebo`](https://github.com/Zhefan-Xu/drone_gazebo) |
 
 The maze comes from a repository without a license file. It is included to reproduce the
-experiments, and its author can ask for its removal by opening an issue.
+experiments, but can be removed if its author asks for it.
 
 ## Use
 
