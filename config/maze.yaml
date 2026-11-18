@@ -10,7 +10,7 @@ planning_box:
   max_x: 10.0
   min_y: -9.0
   max_y: 9.0
-  min_z: 0.2
+  min_z: 0.5
   max_z: 2.5
 
 # Information gain region
@@ -29,4 +29,4 @@ reconstruction_box:
   min_y: -9.0
   max_y: 9.0
   min_z: 0.0
-  max_z: 2.5
+  max_z: 2.6
